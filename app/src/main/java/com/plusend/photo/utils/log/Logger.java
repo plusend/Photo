@@ -20,7 +20,7 @@ import android.util.Log;
  * -------------------------------------------------------------------------
  */
 public final class Logger {
-    private static String TAG = "Yulore";
+    private static String TAG = "plusend";
 
     private static boolean DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
 

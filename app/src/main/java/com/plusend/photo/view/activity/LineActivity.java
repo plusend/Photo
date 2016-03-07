@@ -1,24 +1,38 @@
 package com.plusend.photo.view.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.plusend.photo.R;
+import com.plusend.photo.db.PhotoDAO;
+import com.plusend.photo.db.handler.PhotoCursorHandler;
+import com.plusend.photo.model.Photo;
+import com.plusend.photo.utils.log.Logger;
 import com.plusend.photo.view.adapter.RvAdapter;
 
-public class LineActivity extends AppCompatActivity {
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
-    private RecyclerView recyclerView;
+public class LineActivity extends AppCompatActivity {
+    private static final String TAG = "LineActivity";
+
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RvAdapter rvAdapter;
+    private List<Photo> photos = new ArrayList<>();
+
+    private MyHandler UiHandler = new MyHandler(LineActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,20 +41,74 @@ public class LineActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        rvAdapter = new RvAdapter(this);
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        PhotoDAO photoDAO = new PhotoDAO(LineActivity.this);
+                        List<Photo> photosDb = photoDAO.query(new String[]{"_id", "pic", "note", "date"},
+                                null, null, new PhotoCursorHandler());
+                        Logger.d(TAG, "photosDb:" + photosDb);
+                        Message msg = Message.obtain();
+                        msg.what = 1;
+                        msg.obj = photosDb;
+                        UiHandler.sendMessage(msg);
+                    }
+                }).start();
+            }
+        });
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        rvAdapter = new RvAdapter(photos);
+        rvAdapter.setItemClickListener(new RvAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                Logger.d(TAG, "onItemClick");
+                Intent intent = new Intent(LineActivity.this, DetailActivity.class);
+                intent.putExtra("photo", photos.get(position).getId());
+                startActivity(intent);
+            }
+        });
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+        recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(rvAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(LineActivity.this, InsertActivity.class);
+                startActivity(intent);
             }
         });
+
+    }
+
+    public static class MyHandler extends Handler {
+        private WeakReference<LineActivity> activity;
+
+        public MyHandler(LineActivity lineActivity) {
+            super();
+            this.activity = new WeakReference<>(lineActivity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            LineActivity line = activity.get();
+            if (line == null)
+                return;
+            switch (msg.what) {
+                case 1:
+                    line.photos.clear();
+                    line.photos.addAll((List<Photo>) msg.obj);
+                    line.rvAdapter.notifyDataSetChanged();
+                    line.swipeRefreshLayout.setRefreshing(false);
+                    break;
+            }
+        }
     }
 
     @Override

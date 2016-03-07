@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Photo</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_insert">InsertActivity</string>
+
+    <item name="cacheBitmapKey" type="id">1</item>
+    <item name="cacheBitmapDirtyKey" type="id">2</item>
 </resources>

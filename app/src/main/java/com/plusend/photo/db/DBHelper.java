@@ -18,7 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * 数据库的名称
      */
-    public static final String DB_NAME = "photo";
+    public static final String DB_NAME = "photo.db";
     /**
      * 数据库版本
      */
@@ -42,7 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sqlPhoto = "CREATE TABLE photo (pic blob,note text,level integer,date integer)";
+        String sqlPhoto = "CREATE TABLE photo (_id integer primary key autoincrement, pic blob, note text, date integer)";
         db.execSQL(sqlPhoto);
     }
 

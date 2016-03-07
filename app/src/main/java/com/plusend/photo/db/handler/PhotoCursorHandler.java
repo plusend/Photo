@@ -19,10 +19,9 @@ public class PhotoCursorHandler implements CursorHandler<Photo> {
         List<Photo> pList = new ArrayList<>();
         while (cursor != null && cursor.moveToNext()) {
             Photo photo = new Photo();
+            photo.setId(cursor.getInt(cursor.getColumnIndex("_id")));
             photo.setPic(Utils.Bytes2Bimap(cursor.getBlob(cursor
                     .getColumnIndex("pic"))));
-            photo.setLevel(cursor.getInt(cursor
-                    .getColumnIndex("level")));
             photo.setNote(cursor.getString(cursor
                     .getColumnIndex("note")));
             photo.setDate(new Date(cursor.getLong(cursor

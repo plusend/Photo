@@ -87,7 +87,7 @@ public abstract class SQLiteOpenHelperBaseDAO<T> {
             mDatabaseManager = DatabaseManager.getInstance(getSQLiteOpenHelper());
         try {
             cursor = mDatabaseManager.getReadableDatabase().query(getTableName(), columns, selection,
-                    selectionArgs, null, null, null);
+                    selectionArgs, null, null, "date asc");
             d = handler != null ? handler.handle(cursor) : null;
         } catch (Exception e) {
             e.printStackTrace();

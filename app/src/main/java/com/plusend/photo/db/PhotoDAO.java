@@ -31,9 +31,9 @@ public class PhotoDAO extends SQLiteOpenHelperBaseDAO<Photo> {
             return null;
         ContentValues values = new ContentValues();
         values.put("pic", Utils.Bitmap2Bytes(entity.getPic()));
-        values.put("level", entity.getLevel());
         values.put("note", entity.getNote());
-        values.put("date", entity.getDate().getTime());
+        if (entity.getDate() != null)
+            values.put("date", entity.getDate().getTime());
         return values;
     }
 
