@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 
 import com.plusend.photo.model.Photo;
-import com.plusend.photo.utils.Utils;
+import com.plusend.photo.utils.BitmapUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +20,7 @@ public class PhotoCursorHandler implements CursorHandler<Photo> {
         while (cursor != null && cursor.moveToNext()) {
             Photo photo = new Photo();
             photo.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-            photo.setPic(Utils.Bytes2Bimap(cursor.getBlob(cursor
+            photo.setPic(BitmapUtils.Bytes2Bimap(cursor.getBlob(cursor
                     .getColumnIndex("pic"))));
             photo.setNote(cursor.getString(cursor
                     .getColumnIndex("note")));

@@ -18,6 +18,7 @@ import com.plusend.photo.R;
 import com.plusend.photo.db.PhotoDAO;
 import com.plusend.photo.db.handler.PhotoCursorHandler;
 import com.plusend.photo.model.Photo;
+import com.plusend.photo.utils.DataUtils;
 import com.plusend.photo.utils.log.Logger;
 import com.plusend.photo.view.adapter.RvAdapter;
 
@@ -52,9 +53,11 @@ public class LineActivity extends AppCompatActivity {
                         List<Photo> photosDb = photoDAO.query(new String[]{"_id", "pic", "note", "date"},
                                 null, null, new PhotoCursorHandler());
                         Logger.d(TAG, "photosDb:" + photosDb);
+
+                        List<Photo> photosShow = DataUtils.convertFromDb(photosDb);
                         Message msg = Message.obtain();
                         msg.what = 1;
-                        msg.obj = photosDb;
+                        msg.obj = photosShow;
                         UiHandler.sendMessage(msg);
                     }
                 }).start();

@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide;
 import com.plusend.photo.R;
 import com.plusend.photo.db.PhotoDAO;
 import com.plusend.photo.model.Photo;
-import com.plusend.photo.utils.Utils;
+import com.plusend.photo.utils.BitmapUtils;
 import com.plusend.photo.utils.log.Logger;
 
 import java.util.Calendar;
@@ -77,7 +77,7 @@ public class InsertActivity extends AppCompatActivity {
 
                 String note = editText.getText().toString();
                 photo.setNote(note);
-                photo.setPic(Utils.getMagicDrawingCache(imageView));
+                photo.setPic(BitmapUtils.getMagicDrawingCache(imageView));
 
                 new Thread(new Runnable() {
                     @Override

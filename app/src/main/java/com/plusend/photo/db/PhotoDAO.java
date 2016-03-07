@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.plusend.photo.model.Photo;
-import com.plusend.photo.utils.Utils;
+import com.plusend.photo.utils.BitmapUtils;
 
 /**
  * Created by plusend on 16/1/24.
@@ -30,7 +30,7 @@ public class PhotoDAO extends SQLiteOpenHelperBaseDAO<Photo> {
         if (entity == null)
             return null;
         ContentValues values = new ContentValues();
-        values.put("pic", Utils.Bitmap2Bytes(entity.getPic()));
+        values.put("pic", BitmapUtils.Bitmap2Bytes(entity.getPic()));
         values.put("note", entity.getNote());
         if (entity.getDate() != null)
             values.put("date", entity.getDate().getTime());

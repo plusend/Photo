@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Created by plusend on 16/2/3.
  */
-public class Utils {
+public class BitmapUtils {
 
     public static byte[] Bitmap2Bytes(Bitmap b) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
